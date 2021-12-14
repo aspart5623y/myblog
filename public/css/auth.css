@@ -1,0 +1,30 @@
+.left-hand-side::before{
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background-image: url('../images/bg/registeration.jpg');
+    background-position: -650px -640px ;
+    background-attachment: fixed;
+    background-size: cover;
+    background-repeat: no-repeat;
+    z-index: -1;
+}
+
+@media screen and (max-width: 1300px) {
+    .left-hand-side::before{
+        background-position: -50px -40px ;
+    }
+}
+
+.left-hand-side{
+    position: relative;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.right-hand-side{
+    height: 100%;
+    background-color: white;
+}
+
