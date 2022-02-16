@@ -46,7 +46,7 @@
                             <a class="nav-link {{ request()->routeIs('about') ? 'active' : '' }}" href="{{ route('about') }}">About</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link {{ request()->routeIs('contact') ? 'active' : '' }}" href="{{ route('contact') }}">Contact</a>
+                            <a class="nav-link {{ request()->routeIs('contact.create') ? 'active' : '' }}" href="{{ route('contact.create') }}">Contact</a>
                         </li>
                     </ul>   
 
@@ -80,7 +80,7 @@
                                     </a>
 
                                     @if (Auth::user()->utype == 'admin')
-                                        <a class="dropdown-item" href="{{ route('admin.category') }}">
+                                        <a class="dropdown-item" href="{{ route('category.index') }}">
                                             Manage Categories
                                         </a>
 
@@ -89,15 +89,11 @@
                                         </a>
                                     @endif
 
-                                    <a class="dropdown-item" href="{{ route('all.posts') }}">
+                                    <a class="dropdown-item" href="{{ route('post.index') }}">
                                         Manage Posts
                                     </a>
 
-                                    <a class="dropdown-item" href="/home">
-                                        Notifications &nbsp; <span class="badge badge-secondary">0</span>
-                                    </a>
-
-                                    <a class="dropdown-item" href="{{ route('profile') }}">
+                                    <a class="dropdown-item" href="{{ route('profile.index') }}">
                                         Profile
                                     </a>
 

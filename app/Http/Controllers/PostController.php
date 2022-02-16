@@ -3,134 +3,101 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\Comment;
 use App\Models\Category;
+use App\Models\PostViews;
+use App\Events\PostViewed;
 use Illuminate\Http\Request;
+use App\Http\Requests\PostRequest;
+use App\Repositories\PostRepository;
 use Illuminate\Support\Facades\Auth;
 
 class PostController extends Controller
 {
 
-    public function addNew()
+    public function index()
     {
-        $categories = Category::all();
-        return view('add-post', compact('categories'));
+        if (Auth::user()->utype == 'admin') {
+            $posts = Post::latest()->paginate(6);
+        } else {
+            $posts = Post::latest()->where('user_id', Auth::user()->id)->paginate(6);
+        }
+        return view('posts.index', compact('posts'));
     }
 
-    public function storePost(Request $request)
+    public function show(Post $post)
     {
-        $title = $request->title;
-        $body = $request->body;
-        $category = $request->category;
-        $user_id = $request->user_id;
-        $image = $request->file('image');
+        $latest_posts = Post::latest()->where('image', '!=', '')->get()->take(3);
+        $categories = Category::with('posts')->get();
+        $comments = $post->comments;
+        $views = PostViews::where('post_id', $post->id);
 
         
-
-        $this->validate($request, [
-            'category' => 'required',
-            'title' => 'required',
-            'body' => 'required|min:100'
-        ]);
-
-        $post = new Post();
-
-        if ($image != '') {
-            // image
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('post-images'), $imageName);
-            $post->image = $imageName;
+        if(Auth::check()) {
+            event(new PostViewed($post));
         }
 
+        return view('posts.show', compact('post', 'categories', 'latest_posts', 'comments', 'views'));
+    }
+    
+    public function create()
+    {
+        $categories = Category::all();
+        return view('posts.create', compact('categories'));
+    }
 
-        $post->title = $title;
-        $post->body = $body;
-        $post->category_id = $category;
-        $post->user_id = $user_id;
 
-        if (Auth::user()->utype == 'admin') {
-            $post->status = 'approved';
-        } 
-
-        $post->save();
-        return redirect()->route('all.posts')
+    public function store(PostRequest $request, PostRepository $postRepository)
+    {
+        $validatedData = $request->validated();
+        $post = $postRepository->create($validatedData);
+        return redirect()->route('post.index')
                 ->with('post_validation', 'Your post has been created successfully!');
     }
 
 
-    public function updateStatus($id)
+    public function updateStatus(Post $post)
     {
-        $post = Post::find($id);
         $post->status = 'approved';
         $post->save();
         return back()->with('post_validation', 'Your post has been created successfully!');
     }
 
-    public function editPost($id)
+
+    public function edit(Post $post)
     {
-        $post = Post::find($id);
         $categories = Category::all();
-        return view('edit-post', compact('post', 'categories'));
+        return view('posts.edit', compact('post', 'categories'));
     }
 
-    public function updatePost(Request $request)
+
+    public function update(PostRequest $request, PostRepository $postRepository, Post $post)
     {
-        $title = $request->title;
-        $body = $request->body;
-        $image = $request->image;
-        $category = $request->category;
-        $post_id = $request->post_id;
-        $image = $request->file('image');
-
-        
-        $this->validate($request, [
-            'category' => 'required',
-            'title' => 'required',
-            'body' => 'required|min:100'
-        ]);
-
-        $post = Post::find($post_id);
-
-        if ($image != '' && $post->image != '') {
-            // image
-            unlink(public_path('post-images') . '/' . $post->image);
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('post-images'), $imageName);
-            $post->image = $imageName;
-        } elseif ($image != '') {
-            $imageName = time() . '.' . $image->extension();
-            $image->move(public_path('post-images'), $imageName);
-            $post->image = $imageName;
-        }
-
-        $post->title = $title;
-        $post->body = $body;
-        $post->category_id = $category;
-
-        
-
-        if (Auth::user()->utype == 'admin') {
-            $post->status = 'approved';
-        } 
-        
-        $post->save();
-        return redirect()->route('all.posts')
+        $validatedData = $request->validated();
+        $postUpdate = $postRepository->update($validatedData, $post);
+        return redirect()->route('post.index')
                 ->with('post_validation', 'Your post has been updated successfully!');
     }
 
-    public function deletePost($id)
+
+    public function destroy(Post $post)
     {
-        $post = Post::find($id);
         $post->delete();
         return back()->with('post_validation', 'Your post has been deleted successfully!');
     }
 
-    public function render()
+    public function comment(PostRequest $request, PostRepository $postRepository, Post $post)
     {
-        if (Auth::user()->utype == 'admin') {
-            $posts = Post::orderBy('created_at', 'DESC')->paginate(6);
-        } else {
-            $posts = Post::orderBy('created_at', 'DESC')->where('user_id', Auth::user()->id)->paginate(6);
-        }
-        return view('manage-posts', compact('posts'));
+        $validatedData = $request->validated();
+        $comment = $postRepository->comment($validatedData, $post);
+        return back()->with('comment_saved', 'Your comment has been added!');
     }
+
+    public function reply(PostRequest $request, PostRepository $postRepository, Post $post, Comment $comment)
+    {
+        $validatedData = $request->validated();
+        $replyComment = $postRepository->reply($validatedData, $post, $comment);
+        return back()->with('comment_saved', 'Your reply has been added!');
+    }
+   
 }

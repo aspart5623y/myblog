@@ -18,7 +18,7 @@
         <div class="row blog-post">
             @foreach ($searchResult as $result)
                 <div class="card col-lg-4 p-0">
-                    <a class="card-post" href="">
+                    <a class="card-post" href="{{ route('post.show', ['post' => $result->id]) }}">
                         <div class="text-center">
                             <img src="{{ asset('post-images') }}/{{ $result->image }}" style="height: 150px; width: auto;" alt="" class="card-img-top border mb-2">
                         </div>
@@ -28,14 +28,14 @@
                                 <div class="date">{{ Carbon\Carbon::parse($result->created_at)->format('d F Y, g:i a') }}</div>
                                 <div class="category"><a href="#">{{ $result->category->title }}</a></div>
                             </div>
-                            <a href="/post/{{ $result->id }}">
+                            <a href="{{ route('post.show', ['post' => $result->id]) }}">
                                 <h3 class="h4">{{ $result->title }}</h3></a>
                             <p class="text-muted">
                                 {{ Str::limit($result->body, 100) }}
                             </p>
                         </div>
                         <footer class="post-footer d-flex align-items-center">
-                            <img src="{{ asset('images/img/avatar-2.jpg') }}" class="post img-fluid rounded-circle" alt="">
+                            <img src="{{ asset('profile-images') }}/{{ $result->user->profile_image }}" class="post img-fluid rounded-circle" alt="">
                             <div class="title">
                                 <span class="name text-capitalize">{{ $result->user->username }}</span>
                             </div>

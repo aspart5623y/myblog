@@ -2,8 +2,10 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\Reply;
+use App\Models\Comment;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Post extends Model
 {
@@ -20,6 +22,32 @@ class Post extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    /**
+     * Get all of the comments for the Post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function comments()
+    {
+        return $this->hasMany(Comment::class)->orderBy('created_at', 'desc');
+    }
+
+    /**
+     * Get all of the comments for the Post
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
+     */
+    public function replies()
+    {
+        return $this->hasManyThrough(Reply::class, Comment::class, 'post_id', 'comment_id', 'id', 'id')->orderBy('created_at', 'desc');
+    }
+    
+    public function views()
+    {
+        return $this->belongsToMany(User::class);
+    }
+
 
     public function scopeSearch($query, $findable)
     {

@@ -20,6 +20,6 @@ class AdminAuth
             return $next($request);
         } 
 
-        return redirect('home')->with('error', 'you dont have access to this feature');
+        return redirect('home')->with('error', 'you dont have access to the admin');
     }
 }

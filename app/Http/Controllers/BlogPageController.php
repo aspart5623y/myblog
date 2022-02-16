@@ -13,6 +13,7 @@ class BlogPageController extends Controller
         $categories = Category::with('posts')->get();
         $latest_posts = Post::orderBy('created_at', 'DESC')->where('image', '!=', '')->get()->take(3);
         $posts = Post::orderBy('created_at', 'DESC')->paginate(6);
+        // $comment = $posts->comments;
         return view('blog', compact('posts', 'categories', 'latest_posts'));
     }
 }

@@ -4,67 +4,48 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use App\Http\Requests\CategoryRequest;
+use App\Repositories\CategoryRepository;
 
 class CategoryController extends Controller
 {
-    public function addNew()
+
+    public function index()
     {
-        return view('admin.add-category');
+        $categories = Category::all();
+        return view('admin.categories.index', compact('categories'));
+    }
+    
+    public function create()
+    {
+        return view('admin.categories.create');
     }
 
-    public function storeCategory(Request $request)
+    public function store(CategoryRequest $request, CategoryRepository $categoryRepository)
     {
-        $category_name = $request->category_name;
-        $category_desc = $request->category_desc;
-
-        $this->validate($request, [
-            'category_name' => 'required|unique:categories',
-            'category_desc' => 'required|max:50'
-        ]);
-
-        $category = new Category();
-        $category->title = $category_name;
-        $category->description = $category_desc;
-        $category->save();
-        return redirect()->route('admin.category')
+        $validatedData = $request->validated();
+        $category = $categoryRepository->create($validatedData);
+        return redirect()->route('category.index')
                 ->with('category_added', 'Category has been added successfully!');
     }
 
-    public function editCategory($id)
+    public function edit(Category $category)
     {
-        $category = Category::find($id);
-        return view('admin.edit-category', compact('category'));
+        return view('admin.categories.edit', compact('category'));
     }
 
-    public function updateCategory(Request $request)
+    public function update(CategoryRequest $request, CategoryRepository $categoryRepository, Category $category)
     {
-        $title = $request->category_name;
-        $desc = $request->category_desc;
-
-        $this->validate($request, [
-            'category_name' => 'required',
-            'category_desc' => 'required|max:50'
-        ]);
-
-        $category = Category::find($request->id);
-        $category->title = $title;
-        $category->description = $desc;
-        $category->save();
-        return redirect()->route('admin.category')
+        $validatedData = $request->validated();
+        $category = $categoryRepository->update($validatedData, $category);
+        return redirect()->route('category.index')
                 ->with('category_added', 'Category has been updated successfully!');
     }
 
-    public function deleteCategory($id)
+    public function destroy(Category $category)
     {
-        $category = Category::find($id);
         $category->delete();
-        return redirect()->route('admin.category')
+        return redirect()->route('category.index')
                 ->with('category_added', 'Category has been deleted successfully!');
-    }
-
-    public function render()
-    {
-        $categories = Category::all();
-        return view('admin.manage-categories', compact('categories'));
     }
 }

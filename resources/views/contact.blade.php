@@ -21,7 +21,7 @@
             @endif
             <section class="reply-form">
                 <div class="col-lg-8 p-0">
-                    <form action="{{ route('send.message') }}" method="POST">
+                    <form action="{{ route('contact.store') }}" method="POST">
                         @csrf
                         
                         <div class="row p-3">

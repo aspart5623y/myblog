@@ -19,7 +19,7 @@
                         @foreach ($posts as $post)
 
                             <div class="card col-lg-6 p-0">
-                                <a class="card-post" href="">
+                                <a class="card-post" href="{{ route('post.show', ['post' => $post->id]) }}">
                                     <div class="text-center">
                                         <img src="{{ asset('post-images') }}/{{ $post->image }}" style="height: 150px; width: auto;" alt="" class="card-img-top mb-2">
                                     </div>
@@ -29,7 +29,7 @@
                                             <div class="date">{{ Carbon\Carbon::parse($post->created_at)->format('d F Y, g:i a') }}</div>
                                             <div class="category"><a href="#">{{ $post->category->title }}</a></div>
                                         </div>
-                                        <a href="/post/{{ $post->id }}">
+                                        <a href="{{ route('post.show', ['post' => $post->id]) }}">
                                             <h3 class="h4">{{ $post->title }}</h3></a>
                                         <p class="text-muted">
                                             {{ Str::limit($post->body, 100) }}
@@ -46,7 +46,7 @@
                                         </div>
                                         <div class="comments">
                                             <i class="far fa-comment-dots"></i>
-                                            <span class="comments-num">12</span>
+                                            <span class="comments-num">{{ $post->comments->count() }}</span>
                                         </div>
                                     </footer>
                                 </a>
