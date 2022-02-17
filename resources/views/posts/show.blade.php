@@ -55,7 +55,7 @@
                         @endif
                         <div class="comments-header d-flex">
                             <h5>Posts Comments</h5> &nbsp;
-                            <span>(3)</span>
+                            <span>({{ $comments->count() }})</span>
                         </div>
                         <div class="comment-body">
 

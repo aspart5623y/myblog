@@ -78,7 +78,7 @@
                                     </div>
                                     <div class="comments">
                                         <i class="far fa-comment-dots"></i>
-                                        <span class="comments-num">12</span>
+                                        <span class="comments-num">{{ $random_post->comments->count() }}</span>
                                     </div>
                                 </footer>
                             </div>

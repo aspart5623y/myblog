@@ -9,8 +9,8 @@ class HomePageController extends Controller
 {
     public function render()
     {
-        $random_posts = Post::inRandomOrder()->where('image', '!=', '')->get()->take(3);
-        $latest_posts = Post::orderBy('created_at', 'DESC')->where('image', '!=', '')->get()->take(3);
+        $random_posts = Post::inRandomOrder()->where('image', '!=', '')->where('status', 'approved')->get()->take(3);
+        $latest_posts = Post::orderBy('created_at', 'DESC')->where('image', '!=', '')->where('status', 'approved')->get()->take(3);
         return view('index', compact('latest_posts', 'random_posts'));
     }
 }
