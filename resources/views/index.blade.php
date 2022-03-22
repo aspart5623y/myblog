@@ -145,10 +145,21 @@
                     consectetur adipisicing elit, 
                     sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
                 </p>
-                <div class="input-group">
-                    <input type="text" class="subscribe-form" placeholder="Type your email address">
-                    <button class="subscribe-btn">Subscribe</button>
-                </div>
+                @if (Session::has('message'))
+                    <div class="alert alert-success">{{ Session::get('message') }}</div>
+                @elseif (Session::has('error'))
+                    <div class="alert alert-danger">{{ Session::get('error') }}</div>
+                @endif
+                <form action="{{ route('newsletter') }}" method="POST">
+                    @csrf
+                    <div class="input-group">
+                        <input type="email" class="subscribe-form @error('email') is-invalid @enderror" name="email" placeholder="Type your email address">
+                        <button type="submit" class="subscribe-btn">Subscribe</button>
+                    </div>
+                    @error('email')
+                        <p class="text-danger">{{ $message }}</p>
+                    @enderror
+                </form>
             </div>
         </div>
     </section>

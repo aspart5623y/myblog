@@ -11,6 +11,7 @@ use App\Http\Controllers\BlogPageController;
 use App\Http\Controllers\BlogPostController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\HomePageController;
+use App\Http\Controllers\NewsletterController;
 use App\Http\Controllers\AdminContactController;
 
 /*
@@ -38,6 +39,8 @@ Route::resource('/contact', ContactController::class)->only(['create', 'store'])
 Route::get('/post/{post}', [PostController::class, 'show'])->name('post.show');
 
 Route::get('/search', [SearchController::class, 'searchTerm'])->name('search');
+
+Route::post('/newsletter', [NewsletterController::class, 'store'])->name('newsletter');
 
 Auth::routes();
 
